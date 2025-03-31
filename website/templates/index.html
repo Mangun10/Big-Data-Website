@@ -3,70 +3,297 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dark Patterns Detection</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <title>Dark Pattern Detector</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>Dark Patterns Detection</h1>
-            <p>Dark patterns are user interface designs that are crafted to trick users into doing things they might not want to do, such as buying insurance with their purchase or signing up for recurring bills.</p>
-            <p>This website helps you identify if a webpage contains dark patterns by analyzing its content. Simply enter the URL of the webpage you want to check, and our tool will do the rest.</p>
-        </header>
-        <main>
-            <section class="form-section">
-                <h2>Check a Webpage for Dark Patterns</h2>
-                <form action="/predict" method="post">
-                    <label for="url">Enter Website URL:</label>
-                    <input type="text" id="url" name="url" required>
-                    <button type="submit">Check</button>
-                </form>
-                {% if url %}
-                    <div class="results">
-                        <h2>Results for URL: {{ url }}</h2>
-                        <p>Contains Dark Patterns: {{ prediction }}</p>
-                    </div>
-                {% endif %}
-            </section>
-            <section class="info-section">
-                <h2>What are Dark Patterns?</h2>
-                <p>Dark patterns are deceptive design techniques used to manipulate users into taking actions they might not otherwise take. These actions often benefit the business at the expense of the user.</p>
-                <p>Common types of dark patterns include:</p>
-                <ul>
-                    <li><strong>Bait and Switch:</strong> A user thinks they are doing one thing, but something else happens.</li>
-                    <li><strong>Confirmshaming:</strong> Guilt-tripping the user into opting in.</li>
-                    <li><strong>Disguised Ads:</strong> Ads that are disguised as other kinds of content or navigation.</li>
-                    <li><strong>Forced Continuity:</strong> Making it hard to cancel a subscription.</li>
-                    <li><strong>Hidden Costs:</strong> Adding extra charges at the last step of the checkout process.</li>
+    <header>
+        <nav class="navbar">
+            <div class="container">
+                <div class="logo">
+                    <h1><i class="fas fa-shield-alt"></i> DarkPatternDetect</h1>
+                </div>
+                <ul class="nav-links">
+                    <li><a href="#home" class="active">Home</a></li>
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#patterns">Dark Patterns</a></li>
+                    <li><a href="#contact">Contact</a></li>
                 </ul>
-            </section>
-            <section class="examples-section">
-                <h2>Examples of Dark Patterns</h2>
-                <div class="example">
-                    <h3>Bait and Switch</h3>
-                    <p>A user thinks they are downloading a free application, but they are actually signing up for a paid subscription.</p>
+                <div class="hamburger">
+                    <div class="bar"></div>
+                    <div class="bar"></div>
+                    <div class="bar"></div>
                 </div>
-                <div class="example">
-                    <h3>Confirmshaming</h3>
-                    <p>A user is guilt-tripped into signing up for a newsletter because the decline button says "No, I don't want to stay informed."</p>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <section id="home" class="hero">
+            <div class="container">
+                <div class="hero-content">
+                    <h1>Detect Dark Patterns on Websites</h1>
+                    <p>Dark patterns are deceptive UX/UI tricks used to manipulate users. Our tool helps you identify these patterns to make informed decisions online.</p>
+                    <a href="#detector" class="btn btn-primary">Try It Now</a>
+                    <a href="#patterns" class="btn btn-secondary">Learn More</a>
                 </div>
-                <div class="example">
-                    <h3>Disguised Ads</h3>
-                    <p>Ads that are designed to look like legitimate content, tricking users into clicking on them.</p>
+                <div class="hero-image">
+                    <img src="https://images.unsplash.com/photo-1517292987719-0369a794ec0f?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1074&q=80" alt="Dark Pattern Detection Illustration">
                 </div>
-                <div class="example">
-                    <h3>Forced Continuity</h3>
-                    <p>Users are required to enter their credit card information for a free trial, making it difficult to cancel before being charged.</p>
+            </div>
+        </section>
+
+        <section id="detector" class="detector">
+            <div class="container">
+                <h2>Check a Website for Dark Patterns</h2>
+                <p>Enter a URL below to analyze the website for potential dark patterns</p>
+                
+                <div class="detector-form">
+                    <form id="url-form">
+                        <div class="form-group">
+                            <input type="url" id="url-input" placeholder="https://example.com" required>
+                            <button type="submit" class="btn btn-primary">Analyze</button>
+                        </div>
+                    </form>
                 </div>
-                <div class="example">
-                    <h3>Hidden Costs</h3>
-                    <p>Extra charges are revealed only at the final step of the checkout process, catching users off guard.</p>
+
+                <div class="loader hidden">
+                    <div class="spinner"></div>
+                    <p>Analyzing website... Please wait</p>
                 </div>
-            </section>
-        </main>
-        <footer>
-            <p>&copy; 2025 Dark Patterns Detection. All rights reserved.</p>
-        </footer>
+
+                <div id="results" class="results hidden">
+                    <div class="results-header">
+                        <h3>Analysis Results</h3>
+                        <span class="timestamp">Analyzed on <span id="analysis-date"></span></span>
+                    </div>
+                    
+                    <div class="result-summary">
+                        <div class="result-score">
+                            <div class="score" id="score-display">0</div>
+                            <p>Dark Pattern Score</p>
+                        </div>
+                        <div class="result-details">
+                            <h4>Website: <span id="analyzed-url"></span></h4>
+                            <p id="summary-text">This website appears to contain some dark patterns. See details below.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="patterns-found">
+                        <h4>Detected Patterns</h4>
+                        <div id="patterns-list" class="patterns-grid">
+                            <!-- Patterns will be dynamically inserted here -->
+                        </div>
+                    </div>
+                    
+                    <div class="result-actions">
+                        <button id="download-report" class="btn btn-secondary">Download Report</button>
+                        <button id="share-results" class="btn btn-outline">Share Results</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="about" class="about">
+            <div class="container">
+                <div class="about-content">
+                    <h2>About Dark Pattern Detection</h2>
+                    <p>Our tool uses advanced algorithms to scan websites for deceptive design patterns that manipulate users into making decisions they might not otherwise make.</p>
+                    <p>By identifying these patterns, we help users make more informed choices and promote ethical design practices across the web.</p>
+                </div>
+                <div class="about-stats">
+                    <div class="stat-card">
+                        <div class="stat-number">10+</div>
+                        <div class="stat-label">Dark Pattern Types Detected</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">99%</div>
+                        <div class="stat-label">Accuracy Rate</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">5K+</div>
+                        <div class="stat-label">Websites Analyzed</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="patterns" class="patterns">
+            <div class="container">
+                <h2>Common Dark Patterns</h2>
+                <p>Learn about the various types of dark patterns commonly found on websites</p>
+                
+                <div class="patterns-grid">
+                    <div class="pattern-card">
+                        <div class="pattern-icon">
+                            <i class="fas fa-exchange-alt"></i>
+                        </div>
+                        <h3>Bait and Switch</h3>
+                        <p>Users are led to expect one outcome but something different happens instead.</p>
+                        <div class="pattern-example">
+                            <h4>Example:</h4>
+                            <p>A "Download" button that opens ads instead of downloading the promised file.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="pattern-card">
+                        <div class="pattern-icon">
+                            <i class="fas fa-exclamation-circle"></i>
+                        </div>
+                        <h3>Confirmshaming</h3>
+                        <p>Making users feel bad for not selecting a particular option.</p>
+                        <div class="pattern-example">
+                            <h4>Example:</h4>
+                            <p>"No thanks, I don't want to save money" as an opt-out option.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="pattern-card">
+                        <div class="pattern-icon">
+                            <i class="fas fa-ad"></i>
+                        </div>
+                        <h3>Disguised Ads</h3>
+                        <p>Advertisements designed to look like normal content or navigation.</p>
+                        <div class="pattern-example">
+                            <h4>Example:</h4>
+                            <p>Download buttons that are actually ads placed near the real download link.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="pattern-card">
+                        <div class="pattern-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <h3>Forced Continuity</h3>
+                        <p>Charging users for services after a free trial without warning.</p>
+                        <div class="pattern-example">
+                            <h4>Example:</h4>
+                            <p>Services that require credit card info for free trials and automatically charge when the trial ends.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="pattern-card">
+                        <div class="pattern-icon">
+                            <i class="fas fa-money-bill-wave"></i>
+                        </div>
+                        <h3>Hidden Costs</h3>
+                        <p>Additional charges that are only revealed at the end of a checkout process.</p>
+                        <div class="pattern-example">
+                            <h4>Example:</h4>
+                            <p>Extra fees and taxes added at the last step of checkout after investing time in the process.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="pattern-card">
+                        <div class="pattern-icon">
+                            <i class="fas fa-shopping-cart"></i>
+                        </div>
+                        <h3>Sneak into Basket</h3>
+                        <p>Adding items to a user's cart without their clear consent.</p>
+                        <div class="pattern-example">
+                            <h4>Example:</h4>
+                            <p>Pre-selected add-ons or insurance that users must actively deselect.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="contact" class="contact">
+            <div class="container">
+                <h2>Contact Us</h2>
+                <p>Have questions or feedback about our dark pattern detection tool?</p>
+                
+                <div class="contact-form">
+                    <form id="contact-form">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="name">Name</label>
+                                <input type="text" id="name" placeholder="Your Name" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="email">Email</label>
+                                <input type="email" id="email" placeholder="Your Email" required>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="subject">Subject</label>
+                            <input type="text" id="subject" placeholder="Subject" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="message">Message</label>
+                            <textarea id="message" placeholder="Your Message" required rows="5"></textarea>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary">Send Message</button>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <h2><i class="fas fa-shield-alt"></i> DarkPatternDetect</h2>
+                    <p>Helping users identify deceptive design practices.</p>
+                </div>
+                
+                <div class="footer-links">
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="#home">Home</a></li>
+                        <li><a href="#about">About</a></li>
+                        <li><a href="#patterns">Dark Patterns</a></li>
+                        <li><a href="#contact">Contact</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-resources">
+                    <h3>Resources</h3>
+                    <ul>
+                        <li><a href="#">Blog</a></li>
+                        <li><a href="#">Research</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Terms of Service</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-social">
+                    <h3>Follow Us</h3>
+                    <div class="social-icons">
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                        <a href="#"><i class="fab fa-linkedin"></i></a>
+                        <a href="#"><i class="fab fa-github"></i></a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2025 DarkPatternDetect. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Modal for detailed pattern information -->
+    <div id="pattern-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <div id="modal-content">
+                <!-- Dynamic content will be inserted here -->
+            </div>
+        </div>
     </div>
+
+    <script src="script.js"></script>
 </body>
 </html>
