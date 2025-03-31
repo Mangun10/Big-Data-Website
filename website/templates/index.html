@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dark Patterns Detection</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Dark Patterns Detection</h1>
+            <p>Dark patterns are user interface designs that are crafted to trick users into doing things they might not want to do, such as buying insurance with their purchase or signing up for recurring bills.</p>
+            <p>This website helps you identify if a webpage contains dark patterns by analyzing its content. Simply enter the URL of the webpage you want to check, and our tool will do the rest.</p>
+        </header>
+        <main>
+            <section class="form-section">
+                <h2>Check a Webpage for Dark Patterns</h2>
+                <form action="/predict" method="post">
+                    <label for="url">Enter Website URL:</label>
+                    <input type="text" id="url" name="url" required>
+                    <button type="submit">Check</button>
+                </form>
+                {% if url %}
+                    <div class="results">
+                        <h2>Results for URL: {{ url }}</h2>
+                        <p>Contains Dark Patterns: {{ prediction }}</p>
+                    </div>
+                {% endif %}
+            </section>
+            <section class="info-section">
+                <h2>What are Dark Patterns?</h2>
+                <p>Dark patterns are deceptive design techniques used to manipulate users into taking actions they might not otherwise take. These actions often benefit the business at the expense of the user.</p>
+                <p>Common types of dark patterns include:</p>
+                <ul>
+                    <li><strong>Bait and Switch:</strong> A user thinks they are doing one thing, but something else happens.</li>
+                    <li><strong>Confirmshaming:</strong> Guilt-tripping the user into opting in.</li>
+                    <li><strong>Disguised Ads:</strong> Ads that are disguised as other kinds of content or navigation.</li>
+                    <li><strong>Forced Continuity:</strong> Making it hard to cancel a subscription.</li>
+                    <li><strong>Hidden Costs:</strong> Adding extra charges at the last step of the checkout process.</li>
+                </ul>
+            </section>
+            <section class="examples-section">
+                <h2>Examples of Dark Patterns</h2>
+                <div class="example">
+                    <h3>Bait and Switch</h3>
+                    <p>A user thinks they are downloading a free application, but they are actually signing up for a paid subscription.</p>
+                </div>
+                <div class="example">
+                    <h3>Confirmshaming</h3>
+                    <p>A user is guilt-tripped into signing up for a newsletter because the decline button says "No, I don't want to stay informed."</p>
+                </div>
+                <div class="example">
+                    <h3>Disguised Ads</h3>
+                    <p>Ads that are designed to look like legitimate content, tricking users into clicking on them.</p>
+                </div>
+                <div class="example">
+                    <h3>Forced Continuity</h3>
+                    <p>Users are required to enter their credit card information for a free trial, making it difficult to cancel before being charged.</p>
+                </div>
+                <div class="example">
+                    <h3>Hidden Costs</h3>
+                    <p>Extra charges are revealed only at the final step of the checkout process, catching users off guard.</p>
+                </div>
+            </section>
+        </main>
+        <footer>
+            <p>&copy; 2025 Dark Patterns Detection. All rights reserved.</p>
+        </footer>
+    </div>
+</body>
+</html>
